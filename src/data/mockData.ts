@@ -122,15 +122,68 @@ export function generateWeatherData(to: string): { city: string; temp: number; c
   ];
 }
 
-export function generateSafetyScore(): { overall: number; categories: { name: string; score: number }[] } {
+export interface SafetyData {
+  overall: number;
+  verdict: string;
+  categories: { name: string; score: number; icon: string }[];
+  emergencyContacts: { service: string; number: string; icon: string }[];
+  womenSafety: { metric: string; rating: string; icon: string }[];
+  travelAdvisories: { level: string; message: string; color: string }[];
+  soloTravelerTips: string[];
+  nightSafetyScore: number;
+  scamAlerts: { scam: string; risk: string; tip: string }[];
+}
+
+export function generateSafetyScore(destination?: string): SafetyData {
+  const dest = destination || "this destination";
+  const overall = +(7 + Math.random() * 2.5).toFixed(1);
+  const nightScore = +(5.5 + Math.random() * 3.5).toFixed(1);
+
   return {
-    overall: 7 + +(Math.random() * 2.5).toFixed(1),
+    overall,
+    verdict: overall >= 8.5 ? "Very Safe" : overall >= 7 ? "Safe for tourists" : "Moderate – Stay alert",
     categories: [
-      { name: "Crime Rate", score: +(7 + Math.random() * 3).toFixed(1) },
-      { name: "Health Infrastructure", score: +(6 + Math.random() * 3).toFixed(1) },
-      { name: "Transport Safety", score: +(7 + Math.random() * 2.5).toFixed(1) },
-      { name: "Tourist Friendliness", score: +(8 + Math.random() * 2).toFixed(1) },
-      { name: "Emergency Response", score: +(6.5 + Math.random() * 3).toFixed(1) },
+      { name: "Crime Rate", score: +(7 + Math.random() * 3).toFixed(1), icon: "🔒" },
+      { name: "Health Infrastructure", score: +(6 + Math.random() * 3).toFixed(1), icon: "🏥" },
+      { name: "Transport Safety", score: +(7 + Math.random() * 2.5).toFixed(1), icon: "🚗" },
+      { name: "Tourist Friendliness", score: +(8 + Math.random() * 2).toFixed(1), icon: "🤝" },
+      { name: "Emergency Response", score: +(6.5 + Math.random() * 3).toFixed(1), icon: "🚨" },
+      { name: "Food & Water Safety", score: +(6.5 + Math.random() * 3).toFixed(1), icon: "💧" },
+      { name: "Cyber Safety", score: +(7 + Math.random() * 2).toFixed(1), icon: "🛡️" },
+    ],
+    emergencyContacts: [
+      { service: "Police", number: "100", icon: "🚔" },
+      { service: "Ambulance", number: "108", icon: "🚑" },
+      { service: "Fire", number: "101", icon: "🚒" },
+      { service: "Women Helpline", number: "1091", icon: "👩" },
+      { service: "Tourist Helpline", number: "1363", icon: "📞" },
+      { service: "Disaster Mgmt", number: "1078", icon: "⚠️" },
+    ],
+    womenSafety: [
+      { metric: "Solo Women Safety", rating: overall >= 8 ? "High" : overall >= 6.5 ? "Moderate" : "Low", icon: "👩‍💼" },
+      { metric: "Night Mobility", rating: nightScore >= 7.5 ? "Good" : nightScore >= 5.5 ? "Moderate" : "Poor", icon: "🌙" },
+      { metric: "Public Transport Safety", rating: "Moderate-Good", icon: "🚌" },
+      { metric: "Harassment Index", rating: overall >= 8 ? "Very Low" : "Low-Moderate", icon: "📊" },
+    ],
+    travelAdvisories: [
+      { level: "Level 1", message: `${dest}: Exercise normal precautions`, color: "hsl(var(--success))" },
+      { level: "Health", message: "Carry basic medical kit, drink bottled water", color: "hsl(var(--warning))" },
+      { level: "Scam Risk", message: "Beware of overcharging at tourist spots", color: "hsl(var(--warning))" },
+    ],
+    soloTravelerTips: [
+      "Share your live location with family/friends",
+      "Avoid isolated areas after 10 PM",
+      "Use verified ride-hailing apps (Uber/Ola)",
+      "Keep digital copies of all documents",
+      "Register with local tourist police on arrival",
+      "Download offline maps before traveling",
+    ],
+    nightSafetyScore: nightScore,
+    scamAlerts: [
+      { scam: "Taxi Overcharging", risk: "High", tip: "Always use meter or pre-negotiate fare" },
+      { scam: "Fake Tour Guides", risk: "Medium", tip: "Book only through verified platforms" },
+      { scam: "Street Vendor Scams", risk: "Medium", tip: "Compare prices before purchasing" },
+      { scam: "ATM Skimming", risk: "Low", tip: "Use ATMs inside banks only" },
     ],
   };
 }
