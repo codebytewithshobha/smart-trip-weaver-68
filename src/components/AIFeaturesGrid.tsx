@@ -1,20 +1,22 @@
 import { useState } from "react";
 import AIFeaturePanel, { AILoadingInline, useAILoading } from "./AIFeaturePanel";
+import TravelBuddyPanel from "./TravelBuddyPanel";
 import {
-  generateCarbonData, generateBuddyMatches, generateHiddenGems,
+  generateCarbonData, generateHiddenGems,
   generatePackingList, generatePricePrediction, generateWeatherData,
   generateSafetyScore, generateHiddenCosts,
 } from "@/data/mockData";
+import { Leaf, Users, Gem, Backpack, TrendingUp, CloudSun, ShieldCheck, DollarSign } from "lucide-react";
 
 const features = [
-  { id: "carbon", icon: "🌱", title: "Carbon Footprint" },
-  { id: "buddy", icon: "👥", title: "Travel Buddy Match" },
-  { id: "gems", icon: "💎", title: "Hidden Gems" },
-  { id: "packing", icon: "🎒", title: "Smart Packing" },
-  { id: "price", icon: "📈", title: "Price Predictor" },
-  { id: "weather", icon: "🌤️", title: "Weather Compare" },
-  { id: "safety", icon: "🛡️", title: "Safety Score" },
-  { id: "costs", icon: "💸", title: "Hidden Costs" },
+  { id: "carbon", icon: Leaf, title: "Carbon Footprint", desc: "See CO₂ emissions for each route. Choose eco-friendly options.", color: "text-green-400" },
+  { id: "buddy", icon: Users, title: "Travel Buddy Match", desc: "Find verified co-travelers on the same route. Split costs!", color: "text-blue-400" },
+  { id: "gems", icon: Gem, title: "Hidden Gems AI", desc: "Discover secret local spots tourists never find.", color: "text-purple-400" },
+  { id: "packing", icon: Backpack, title: "Smart Packing List", desc: "AI generates packing list based on weather & activities.", color: "text-yellow-400" },
+  { id: "price", icon: TrendingUp, title: "Price Predictor", desc: "AI predicts if prices will rise or fall. Book at best time.", color: "text-rose-400" },
+  { id: "weather", icon: CloudSun, title: "Weather Compare", desc: "Live weather comparison between origin & destination.", color: "text-cyan-400" },
+  { id: "safety", icon: ShieldCheck, title: "Safety Score", desc: "AI safety ratings for solo travelers, women travelers.", color: "text-teal-400" },
+  { id: "costs", icon: DollarSign, title: "Hidden Costs AI", desc: "Predicts ALL expenses including food, local transport.", color: "text-orange-400" },
 ];
 
 interface AIFeaturesGridProps {
@@ -24,9 +26,14 @@ interface AIFeaturesGridProps {
 
 export default function AIFeaturesGrid({ destination, budget }: AIFeaturesGridProps) {
   const [openFeature, setOpenFeature] = useState<string | null>(null);
+  const [buddyOpen, setBuddyOpen] = useState(false);
   const { loading, loaded, trigger } = useAILoading(1200);
 
   const handleOpen = (id: string) => {
+    if (id === "buddy") {
+      setBuddyOpen(true);
+      return;
+    }
     setOpenFeature(id);
     trigger();
   };
@@ -54,23 +61,6 @@ export default function AIFeaturesGrid({ destination, budget }: AIFeaturesGridPr
               </div>
             ))}
             <p className="text-xs text-success mt-4">🌿 Choosing train saves up to 84% CO₂ vs flying!</p>
-          </div>
-        );
-      }
-      case "buddy": {
-        const buddies = generateBuddyMatches();
-        return (
-          <div className="space-y-3">
-            {buddies.map((b) => (
-              <div key={b.name} className="flex items-center gap-3 p-3 rounded-lg bg-secondary/50">
-                <span className="text-3xl">{b.avatar}</span>
-                <div className="flex-1">
-                  <div className="font-semibold text-foreground">{b.name}, {b.age}</div>
-                  <div className="text-xs text-muted-foreground">{b.interests.join(", ")}</div>
-                </div>
-                <div className="text-sm font-bold text-primary">{b.matchPercent}%</div>
-              </div>
-            ))}
           </div>
         );
       }
@@ -203,31 +193,38 @@ export default function AIFeaturesGrid({ destination, budget }: AIFeaturesGridPr
 
   return (
     <div>
-      <h3 className="text-xl font-display font-bold text-foreground mb-4">🤖 AI Features</h3>
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        {features.map((f) => (
-          <button
-            key={f.id}
-            onClick={() => handleOpen(f.id)}
-            className="glass-card p-4 text-center hover:scale-105 transition-transform duration-200 cursor-pointer group"
-          >
-            <span className="text-2xl block mb-1 group-hover:animate-float">{f.icon}</span>
-            <span className="text-xs font-medium text-foreground">{f.title}</span>
-          </button>
-        ))}
+      <h3 className="text-2xl font-display font-bold text-foreground mb-2">AI Features You Won't Find Anywhere Else</h3>
+      <p className="text-sm text-muted-foreground mb-6">Powered by AI to make your travel smarter</p>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {features.map((f) => {
+          const Icon = f.icon;
+          return (
+            <button
+              key={f.id}
+              onClick={() => handleOpen(f.id)}
+              className="glass-card p-5 text-left hover:scale-[1.03] transition-all duration-200 cursor-pointer group border border-border/50 hover:border-primary/40"
+            >
+              <Icon className={`h-7 w-7 mb-3 ${f.color} group-hover:scale-110 transition-transform`} />
+              <h4 className="font-display font-bold text-foreground text-sm mb-1">{f.title}</h4>
+              <p className="text-xs text-muted-foreground leading-relaxed">{f.desc}</p>
+            </button>
+          );
+        })}
       </div>
 
-      {features.map((f) => (
+      {features.filter(f => f.id !== "buddy").map((f) => (
         <AIFeaturePanel
           key={f.id}
           title={f.title}
-          icon={f.icon}
+          icon={f.id}
           isOpen={openFeature === f.id}
           onClose={() => setOpenFeature(null)}
         >
           {openFeature === f.id && renderContent(f.id)}
         </AIFeaturePanel>
       ))}
+
+      <TravelBuddyPanel isOpen={buddyOpen} onClose={() => setBuddyOpen(false)} />
     </div>
   );
 }
