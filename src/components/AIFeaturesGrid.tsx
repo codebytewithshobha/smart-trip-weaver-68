@@ -4,9 +4,9 @@ import TravelBuddyPanel from "./TravelBuddyPanel";
 import {
   generateCarbonData, generateHiddenGems,
   generatePackingList, generatePricePrediction, generateWeatherData,
-  generateSafetyScore, generateHiddenCosts,
+  generateSafetyScore, generateHiddenCosts, SafetyData,
 } from "@/data/mockData";
-import { Leaf, Users, Gem, Backpack, TrendingUp, CloudSun, ShieldCheck, DollarSign } from "lucide-react";
+import { Leaf, Users, Gem, Backpack, TrendingUp, CloudSun, ShieldCheck, DollarSign, ExternalLink, MapPin, Phone, AlertTriangle, Moon, Lightbulb } from "lucide-react";
 
 const features = [
   { id: "carbon", icon: Leaf, title: "Carbon Footprint", desc: "See CO₂ emissions for each route. Choose eco-friendly options.", color: "text-green-400" },
@@ -36,6 +36,10 @@ export default function AIFeaturesGrid({ destination, budget }: AIFeaturesGridPr
     }
     setOpenFeature(id);
     trigger();
+  };
+
+  const openInMaps = (name: string) => {
+    window.open(`https://www.google.com/maps/search/${encodeURIComponent(name + " " + destination)}`, "_blank", "noopener,noreferrer");
   };
 
   const renderContent = (id: string) => {
@@ -69,12 +73,19 @@ export default function AIFeaturesGrid({ destination, budget }: AIFeaturesGridPr
         return (
           <div className="space-y-3">
             {gems.map((g) => (
-              <div key={g.name} className="p-3 rounded-lg bg-secondary/50 space-y-1">
+              <div
+                key={g.name}
+                className="p-3 rounded-lg bg-secondary/50 space-y-2 hover:bg-secondary/70 transition-colors cursor-pointer group"
+                onClick={() => openInMaps(g.name)}
+              >
                 <div className="flex items-center gap-2">
                   <span className="text-2xl">{g.image}</span>
-                  <div>
+                  <div className="flex-1">
                     <div className="font-semibold text-foreground">{g.name}</div>
                     <div className="text-xs text-muted-foreground">{g.category} • ⭐ {g.rating}</div>
+                  </div>
+                  <div className="flex items-center gap-1 text-xs text-primary opacity-0 group-hover:opacity-100 transition-opacity">
+                    <MapPin className="h-3 w-3" /> View on Map <ExternalLink className="h-3 w-3" />
                   </div>
                 </div>
                 <p className="text-sm text-muted-foreground">{g.description}</p>
@@ -143,26 +154,8 @@ export default function AIFeaturesGrid({ destination, budget }: AIFeaturesGridPr
         );
       }
       case "safety": {
-        const safety = generateSafetyScore();
-        return (
-          <div className="space-y-4">
-            <div className="text-center">
-              <div className="text-5xl font-display font-bold text-foreground">{safety.overall}<span className="text-lg text-muted-foreground">/10</span></div>
-              <p className="text-sm text-success mt-1">✅ Safe for tourists</p>
-            </div>
-            {safety.categories.map((c) => (
-              <div key={c.name} className="space-y-1">
-                <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">{c.name}</span>
-                  <span className="font-semibold text-foreground">{c.score}/10</span>
-                </div>
-                <div className="h-2 rounded-full bg-secondary overflow-hidden">
-                  <div className="h-full rounded-full gradient-primary transition-all duration-700" style={{ width: `${c.score * 10}%` }} />
-                </div>
-              </div>
-            ))}
-          </div>
-        );
+        const safety = generateSafetyScore(destination);
+        return <SafetyScoreContent safety={safety} destination={destination} />;
       }
       case "costs": {
         const costs = generateHiddenCosts(budget);
@@ -225,6 +218,195 @@ export default function AIFeaturesGrid({ destination, budget }: AIFeaturesGridPr
       ))}
 
       <TravelBuddyPanel isOpen={buddyOpen} onClose={() => setBuddyOpen(false)} />
+    </div>
+  );
+}
+
+/* ─── Enhanced Safety Score Component ─── */
+function SafetyScoreContent({ safety, destination }: { safety: SafetyData; destination: string }) {
+  const [activeTab, setActiveTab] = useState<"overview" | "women" | "emergency" | "scams" | "tips">("overview");
+
+  const overallColor = safety.overall >= 8.5 ? "text-success" : safety.overall >= 7 ? "text-primary" : "text-warning";
+
+  const tabs = [
+    { key: "overview" as const, label: "Overview", icon: "📊" },
+    { key: "women" as const, label: "Women Safety", icon: "👩" },
+    { key: "emergency" as const, label: "Emergency", icon: "🚨" },
+    { key: "scams" as const, label: "Scam Alerts", icon: "⚠️" },
+    { key: "tips" as const, label: "Solo Tips", icon: "💡" },
+  ];
+
+  return (
+    <div className="space-y-4">
+      {/* Overall Score */}
+      <div className="text-center p-4 rounded-xl bg-secondary/30">
+        <div className={`text-5xl font-display font-bold ${overallColor}`}>
+          {safety.overall}<span className="text-lg text-muted-foreground">/10</span>
+        </div>
+        <p className={`text-sm mt-1 ${overallColor}`}>✅ {safety.verdict}</p>
+        <div className="flex items-center justify-center gap-4 mt-3">
+          <div className="text-center">
+            <Moon className="h-4 w-4 mx-auto text-muted-foreground mb-1" />
+            <div className="text-sm font-bold text-foreground">{safety.nightSafetyScore}/10</div>
+            <div className="text-[10px] text-muted-foreground">Night Safety</div>
+          </div>
+          <div className="w-px h-8 bg-border" />
+          <div className="text-center">
+            <AlertTriangle className="h-4 w-4 mx-auto text-warning mb-1" />
+            <div className="text-sm font-bold text-foreground">{safety.travelAdvisories.length}</div>
+            <div className="text-[10px] text-muted-foreground">Advisories</div>
+          </div>
+          <div className="w-px h-8 bg-border" />
+          <div className="text-center">
+            <Phone className="h-4 w-4 mx-auto text-primary mb-1" />
+            <div className="text-sm font-bold text-foreground">{safety.emergencyContacts.length}</div>
+            <div className="text-[10px] text-muted-foreground">Helplines</div>
+          </div>
+        </div>
+      </div>
+
+      {/* Tab Navigation */}
+      <div className="flex gap-1 overflow-x-auto pb-1">
+        {tabs.map((t) => (
+          <button
+            key={t.key}
+            onClick={() => setActiveTab(t.key)}
+            className={`flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs whitespace-nowrap transition-all ${
+              activeTab === t.key
+                ? "bg-primary/20 text-primary border border-primary/30"
+                : "text-muted-foreground hover:text-foreground hover:bg-secondary/50"
+            }`}
+          >
+            <span>{t.icon}</span> {t.label}
+          </button>
+        ))}
+      </div>
+
+      {/* Tab Content */}
+      {activeTab === "overview" && (
+        <div className="space-y-3">
+          {safety.categories.map((c) => (
+            <div key={c.name} className="space-y-1">
+              <div className="flex justify-between text-sm">
+                <span className="text-muted-foreground">{c.icon} {c.name}</span>
+                <span className="font-semibold text-foreground">{c.score}/10</span>
+              </div>
+              <div className="h-2 rounded-full bg-secondary overflow-hidden">
+                <div
+                  className="h-full rounded-full transition-all duration-700"
+                  style={{
+                    width: `${c.score * 10}%`,
+                    background: c.score >= 8 ? 'hsl(var(--success))' : c.score >= 6 ? 'hsl(var(--primary))' : 'hsl(var(--warning))',
+                  }}
+                />
+              </div>
+            </div>
+          ))}
+          {/* Travel Advisories */}
+          <div className="mt-4 space-y-2">
+            <h4 className="text-sm font-semibold text-foreground flex items-center gap-1">
+              <AlertTriangle className="h-4 w-4 text-warning" /> Travel Advisories
+            </h4>
+            {safety.travelAdvisories.map((a, i) => (
+              <div key={i} className="flex items-start gap-2 p-2 rounded-lg bg-secondary/30 text-xs">
+                <span className="px-1.5 py-0.5 rounded text-[10px] font-bold" style={{ background: a.color, color: 'hsl(var(--background))' }}>
+                  {a.level}
+                </span>
+                <span className="text-muted-foreground">{a.message}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {activeTab === "women" && (
+        <div className="space-y-3">
+          <p className="text-sm text-muted-foreground">AI-analyzed safety metrics for women travelers in {destination}</p>
+          {safety.womenSafety.map((w) => (
+            <div key={w.metric} className="flex items-center justify-between p-3 rounded-lg bg-secondary/30">
+              <span className="flex items-center gap-2 text-sm">
+                <span>{w.icon}</span>
+                <span className="text-foreground">{w.metric}</span>
+              </span>
+              <span className={`text-xs font-semibold px-2 py-1 rounded-full ${
+                w.rating.includes("High") || w.rating.includes("Good") || w.rating.includes("Very Low")
+                  ? "bg-success/20 text-success"
+                  : w.rating.includes("Moderate")
+                  ? "bg-warning/20 text-warning"
+                  : "bg-destructive/20 text-destructive"
+              }`}>
+                {w.rating}
+              </span>
+            </div>
+          ))}
+          <div className="p-3 rounded-lg border border-primary/20 bg-primary/5 text-xs text-muted-foreground space-y-1">
+            <p className="font-semibold text-foreground">🛡️ Women Safety Quick Tips:</p>
+            <ul className="list-disc list-inside space-y-0.5">
+              <li>Save Women Helpline: <span className="text-primary font-semibold">1091</span></li>
+              <li>Prefer well-lit public transport after dark</li>
+              <li>Share live location with trusted contacts</li>
+              <li>Use she-taxi / women-friendly ride services when available</li>
+            </ul>
+          </div>
+        </div>
+      )}
+
+      {activeTab === "emergency" && (
+        <div className="space-y-3">
+          <p className="text-sm text-muted-foreground">Emergency contacts for {destination}</p>
+          <div className="grid grid-cols-2 gap-2">
+            {safety.emergencyContacts.map((e) => (
+              <a
+                key={e.service}
+                href={`tel:${e.number}`}
+                className="flex items-center gap-3 p-3 rounded-lg bg-secondary/30 hover:bg-secondary/50 transition-colors"
+              >
+                <span className="text-xl">{e.icon}</span>
+                <div>
+                  <div className="text-xs text-muted-foreground">{e.service}</div>
+                  <div className="text-sm font-bold text-primary">{e.number}</div>
+                </div>
+              </a>
+            ))}
+          </div>
+          <p className="text-[10px] text-muted-foreground text-center">Tap to call • Available 24/7</p>
+        </div>
+      )}
+
+      {activeTab === "scams" && (
+        <div className="space-y-3">
+          <p className="text-sm text-muted-foreground">Common tourist scams in {destination}</p>
+          {safety.scamAlerts.map((s) => (
+            <div key={s.scam} className="p-3 rounded-lg bg-secondary/30 space-y-1">
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-semibold text-foreground">⚠️ {s.scam}</span>
+                <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                  s.risk === "High" ? "bg-destructive/20 text-destructive" : s.risk === "Medium" ? "bg-warning/20 text-warning" : "bg-success/20 text-success"
+                }`}>
+                  {s.risk} Risk
+                </span>
+              </div>
+              <p className="text-xs text-muted-foreground">💡 {s.tip}</p>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {activeTab === "tips" && (
+        <div className="space-y-3">
+          <p className="text-sm text-muted-foreground">AI-curated safety tips for solo travelers</p>
+          {safety.soloTravelerTips.map((tip, i) => (
+            <div key={i} className="flex items-start gap-3 p-3 rounded-lg bg-secondary/30">
+              <span className="flex-shrink-0 w-6 h-6 rounded-full gradient-primary flex items-center justify-center text-xs text-primary-foreground font-bold">{i + 1}</span>
+              <span className="text-sm text-foreground">{tip}</span>
+            </div>
+          ))}
+          <div className="p-3 rounded-lg border border-success/20 bg-success/5 text-xs text-muted-foreground">
+            <p className="font-semibold text-success mb-1">🌟 Pro Tip</p>
+            <p>Join local travel Facebook/WhatsApp groups for {destination} to get real-time safety updates from fellow travelers.</p>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

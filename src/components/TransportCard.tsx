@@ -1,10 +1,10 @@
 import { TransportOption } from "@/types/travel";
-import { Clock, Star, Leaf, Users, MapPin } from "lucide-react";
+import { Clock, Star, Leaf, Users, MapPin, ExternalLink } from "lucide-react";
 
 const typeConfig = {
-  train: { icon: "🚆", label: "Train", accent: "border-l-success" },
-  flight: { icon: "✈️", label: "Flight", accent: "border-l-primary" },
-  bus: { icon: "🚌", label: "Bus", accent: "border-l-warning" },
+  train: { icon: "🚆", label: "Train", accent: "border-l-success", bookingUrl: "https://www.irctc.co.in", bookingLabel: "Book on IRCTC" },
+  flight: { icon: "✈️", label: "Flight", accent: "border-l-primary", bookingUrl: "https://www.makemytrip.com/flights", bookingLabel: "Book on MakeMyTrip" },
+  bus: { icon: "🚌", label: "Bus", accent: "border-l-warning", bookingUrl: "https://www.redbus.in", bookingLabel: "Book on RedBus" },
 };
 
 interface TransportCardProps {
@@ -14,6 +14,11 @@ interface TransportCardProps {
 
 export default function TransportCard({ option, onSelect }: TransportCardProps) {
   const config = typeConfig[option.type];
+
+  const handleBooking = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    window.open(config.bookingUrl, "_blank", "noopener,noreferrer");
+  };
 
   return (
     <div
@@ -38,7 +43,7 @@ export default function TransportCard({ option, onSelect }: TransportCardProps) 
           {option.stops > 0 && <span className="text-xs text-muted-foreground">{option.stops} stop{option.stops > 1 ? 's' : ''}</span>}
         </div>
 
-        {/* Right: Price & stats */}
+        {/* Right: Price, stats & booking */}
         <div className="flex sm:flex-col items-center sm:items-end gap-3 sm:gap-1">
           <span className="text-2xl font-display font-bold text-foreground">₹{option.price.toLocaleString()}</span>
           <div className="flex items-center gap-3 text-xs text-muted-foreground">
@@ -52,6 +57,13 @@ export default function TransportCard({ option, onSelect }: TransportCardProps) 
               {option.boardingPoint && <span className="flex items-center gap-1"><MapPin className="h-3 w-3" />{option.boardingPoint}</span>}
             </div>
           )}
+          <button
+            onClick={handleBooking}
+            className="mt-2 flex items-center gap-1.5 px-4 py-1.5 rounded-lg text-xs font-semibold gradient-primary text-primary-foreground hover:opacity-90 transition-opacity shadow-glow"
+          >
+            <ExternalLink className="h-3 w-3" />
+            {config.bookingLabel}
+          </button>
         </div>
       </div>
     </div>
