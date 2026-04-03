@@ -51,7 +51,7 @@ export default function HomePage() {
           <Sparkles className="h-3.5 w-3.5" /> AI-Powered Smart Travel
         </div>
         <h1 className="text-4xl sm:text-6xl font-display font-bold text-foreground mb-4 animate-fade-in" style={{ animationDelay: '100ms' }}>
-          Your Journey, <span className="text-gradient">Reimagined</span>
+          Smart Travel <span className="text-gradient">From Anywhere to Everywhere</span>
         </h1>
         <p className="text-lg text-muted-foreground max-w-xl mx-auto animate-fade-in" style={{ animationDelay: '200ms' }}>
           AI compares trains, flights & buses to find your perfect trip — optimized for budget, time, and sustainability.
