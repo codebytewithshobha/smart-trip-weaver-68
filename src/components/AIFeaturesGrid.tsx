@@ -20,6 +20,7 @@ const features = [
   { id: "weather", icon: CloudSun, title: "Weather Compare", desc: "Live weather comparison between origin & destination.", color: "text-cyan-400" },
   { id: "safety", icon: ShieldCheck, title: "Safety Score", desc: "AI safety ratings for solo travelers, women travelers.", color: "text-teal-400" },
   { id: "costs", icon: DollarSign, title: "Hidden Costs AI", desc: "Predicts ALL expenses including food, local transport.", color: "text-orange-400" },
+  { id: "reviews", icon: MessageSquare, title: "Review Detector AI", desc: "Detect fake vs real reviews. AI-powered trust analysis.", color: "text-indigo-400" },
 ];
 
 interface AIFeaturesGridProps {
