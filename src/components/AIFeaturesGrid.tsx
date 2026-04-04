@@ -50,25 +50,7 @@ export default function AIFeaturesGrid({ destination, budget }: AIFeaturesGridPr
 
     switch (id) {
       case "carbon": {
-        const data = generateCarbonData();
-        const maxCo2 = Math.max(...data.map(d => d.co2));
-        return (
-          <div className="space-y-4">
-            <p className="text-sm text-muted-foreground">CO₂ emissions per passenger (kg)</p>
-            {data.map((d) => (
-              <div key={d.mode} className="space-y-1">
-                <div className="flex justify-between text-sm">
-                  <span>{d.mode}</span>
-                  <span className="font-semibold text-foreground">{d.co2} kg</span>
-                </div>
-                <div className="h-3 rounded-full bg-secondary overflow-hidden">
-                  <div className="h-full rounded-full transition-all duration-700" style={{ width: `${(d.co2 / maxCo2) * 100}%`, background: d.color }} />
-                </div>
-              </div>
-            ))}
-            <p className="text-xs text-success mt-4">🌿 Choosing train saves up to 84% CO₂ vs flying!</p>
-          </div>
-        );
+        return <CarbonFootprintPanel />;
       }
       case "gems": {
         const gems = generateHiddenGems(destination);
