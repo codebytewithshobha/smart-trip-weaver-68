@@ -55,6 +55,24 @@ export function generateTransportOptions(from: string, to: string, budget: numbe
         stops: type === 'flight' ? Math.floor(Math.random() * 2) : Math.floor(Math.random() * 4),
         seatType: type === 'bus' ? ['Sleeper', 'Semi-Sleeper', 'Seater', 'AC Sleeper'][Math.floor(Math.random() * 4)] : undefined,
         boardingPoint: type === 'bus' ? boardingPoints[Math.floor(Math.random() * boardingPoints.length)] : undefined,
+        isDirect: Math.random() > 0.4,
+        connections: Math.random() > 0.4 ? undefined : (() => {
+          const numConnections = 1 + Math.floor(Math.random() * 2);
+          const conns = [];
+          for (let c = 0; c < numConnections; c++) {
+            const mode = connectionModes[Math.floor(Math.random() * connectionModes.length)];
+            const hubInfo = nearbyHubs.default[Math.floor(Math.random() * nearbyHubs.default.length)];
+            conns.push({
+              from: c === 0 ? from : hubInfo.hub,
+              to: c === numConnections - 1 ? `${to} ${type === 'bus' ? 'Bus Stand' : type === 'train' ? 'Station' : 'Airport'}` : hubInfo.hub,
+              mode,
+              duration: hubInfo.duration,
+              distance: hubInfo.distance,
+              tip: connectionTips[Math.floor(Math.random() * connectionTips.length)],
+            });
+          }
+          return conns;
+        })(),
       });
     }
   });
