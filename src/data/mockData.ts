@@ -8,6 +8,23 @@ const providers = {
 
 const boardingPoints = ["Central Bus Stand", "Railway Station", "Airport Road", "City Center", "Highway Junction"];
 
+const nearbyHubs: Record<string, { hub: string; distance: string; duration: string }[]> = {
+  default: [
+    { hub: "Ranchi Junction", distance: "12 km", duration: "25 min" },
+    { hub: "Birsa Munda Airport", distance: "8 km", duration: "20 min" },
+    { hub: "Central Bus Stand", distance: "5 km", duration: "15 min" },
+  ],
+};
+
+const connectionModes: ('train' | 'bus' | 'auto' | 'cab')[] = ['auto', 'cab', 'bus', 'train'];
+const connectionTips = [
+  "Auto-rickshaws available right outside the station",
+  "Pre-book an Ola/Uber for best rates",
+  "Local buses run every 15 minutes from this stop",
+  "Shared jeeps available at the main stand",
+  "E-rickshaws are cheapest for short distances",
+];
+
 export function generateTransportOptions(from: string, to: string, budget: number): TransportOption[] {
   const options: TransportOption[] = [];
   const types: ('train' | 'flight' | 'bus')[] = ['train', 'flight', 'bus'];
@@ -38,6 +55,24 @@ export function generateTransportOptions(from: string, to: string, budget: numbe
         stops: type === 'flight' ? Math.floor(Math.random() * 2) : Math.floor(Math.random() * 4),
         seatType: type === 'bus' ? ['Sleeper', 'Semi-Sleeper', 'Seater', 'AC Sleeper'][Math.floor(Math.random() * 4)] : undefined,
         boardingPoint: type === 'bus' ? boardingPoints[Math.floor(Math.random() * boardingPoints.length)] : undefined,
+        isDirect: Math.random() > 0.4,
+        connections: Math.random() > 0.4 ? undefined : (() => {
+          const numConnections = 1 + Math.floor(Math.random() * 2);
+          const conns = [];
+          for (let c = 0; c < numConnections; c++) {
+            const mode = connectionModes[Math.floor(Math.random() * connectionModes.length)];
+            const hubInfo = nearbyHubs.default[Math.floor(Math.random() * nearbyHubs.default.length)];
+            conns.push({
+              from: c === 0 ? from : hubInfo.hub,
+              to: c === numConnections - 1 ? `${to} ${type === 'bus' ? 'Bus Stand' : type === 'train' ? 'Station' : 'Airport'}` : hubInfo.hub,
+              mode,
+              duration: hubInfo.duration,
+              distance: hubInfo.distance,
+              tip: connectionTips[Math.floor(Math.random() * connectionTips.length)],
+            });
+          }
+          return conns;
+        })(),
       });
     }
   });
