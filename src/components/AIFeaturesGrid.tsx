@@ -9,7 +9,7 @@ import {
   generatePackingList, generatePricePrediction, generateWeatherData,
   generateSafetyScore, generateHiddenCosts, SafetyData,
 } from "@/data/mockData";
-import { Leaf, Users, Gem, Backpack, TrendingUp, CloudSun, ShieldCheck, DollarSign, ExternalLink, MapPin, Phone, AlertTriangle, Moon, Lightbulb } from "lucide-react";
+import { Leaf, Users, Gem, Backpack, TrendingUp, CloudSun, ShieldCheck, DollarSign, ExternalLink, MapPin, Phone, AlertTriangle, Moon, Lightbulb, MessageSquare } from "lucide-react";
 
 const features = [
   { id: "carbon", icon: Leaf, title: "Carbon Footprint", desc: "See CO₂ emissions for each route. Choose eco-friendly options.", color: "text-green-400" },
