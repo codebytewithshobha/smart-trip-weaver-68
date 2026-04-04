@@ -5,6 +5,7 @@ import AILoadingScreen from "@/components/AILoadingScreen";
 import TransportCard from "@/components/TransportCard";
 import ItineraryView from "@/components/ItineraryView";
 import AIFeaturesGrid from "@/components/AIFeaturesGrid";
+import HotelRecommendations from "@/components/HotelRecommendations";
 import { generateTransportOptions, generateItinerary } from "@/data/mockData";
 import { TransportOption, ItineraryDay } from "@/types/travel";
 
