@@ -35,7 +35,7 @@ export interface TransportOption {
 export interface ItineraryDay {
   day: number;
   title: string;
-  activities: { time: string; activity: string; cost: number; icon: string }[];
+  activities: { time: string; activity: string; cost: number; icon: string; searchTerm?: string; linkType?: 'maps' | 'zomato' | 'images' | 'book' }[];
 }
 
 export interface BuddyMatch {

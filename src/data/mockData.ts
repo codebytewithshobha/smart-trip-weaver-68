@@ -82,23 +82,23 @@ export function generateTransportOptions(from: string, to: string, budget: numbe
 
 export function generateItinerary(to: string, days: number): ItineraryDay[] {
   const activities = [
-    { time: "08:00", activity: `Breakfast at local café in ${to}`, cost: 300, icon: "🍳" },
-    { time: "09:30", activity: `Visit famous temple/monument`, cost: 200, icon: "🏛️" },
-    { time: "11:00", activity: `Local market exploration`, cost: 500, icon: "🛍️" },
-    { time: "13:00", activity: `Lunch at popular restaurant`, cost: 600, icon: "🍽️" },
-    { time: "14:30", activity: `Museum / Gallery visit`, cost: 300, icon: "🎨" },
-    { time: "16:00", activity: `Street food tour`, cost: 400, icon: "🥘" },
-    { time: "17:30", activity: `Sunset viewpoint`, cost: 0, icon: "🌅" },
-    { time: "19:00", activity: `Dinner & nightlife`, cost: 800, icon: "🌙" },
-    { time: "10:00", activity: `Nature trek / Park walk`, cost: 150, icon: "🌿" },
-    { time: "12:00", activity: `Photography at scenic spots`, cost: 0, icon: "📸" },
-    { time: "15:00", activity: `Adventure activity`, cost: 1500, icon: "🎢" },
-    { time: "18:00", activity: `Spa & relaxation`, cost: 1200, icon: "💆" },
+    { time: "08:00", activity: `Breakfast at local café in ${to}`, cost: 300, icon: "🍳", searchTerm: `best breakfast cafes in ${to}`, linkType: "maps" as const },
+    { time: "09:30", activity: `Visit famous temple in ${to}`, cost: 200, icon: "🏛️", searchTerm: `famous temples in ${to}`, linkType: "maps" as const },
+    { time: "11:00", activity: `Local market exploration in ${to}`, cost: 500, icon: "🛍️", searchTerm: `local markets in ${to}`, linkType: "maps" as const },
+    { time: "13:00", activity: `Lunch at popular restaurant`, cost: 600, icon: "🍽️", searchTerm: `best restaurants in ${to}`, linkType: "zomato" as const },
+    { time: "14:30", activity: `Museum / Gallery visit in ${to}`, cost: 300, icon: "🎨", searchTerm: `museums in ${to}`, linkType: "maps" as const },
+    { time: "16:00", activity: `Street food tour in ${to}`, cost: 400, icon: "🥘", searchTerm: `street food in ${to}`, linkType: "maps" as const },
+    { time: "17:30", activity: `Sunset viewpoint near ${to}`, cost: 0, icon: "🌅", searchTerm: `sunset viewpoints in ${to}`, linkType: "maps" as const },
+    { time: "19:00", activity: `Dinner & nightlife in ${to}`, cost: 800, icon: "🌙", searchTerm: `nightlife in ${to}`, linkType: "zomato" as const },
+    { time: "10:00", activity: `Nature trek near ${to}`, cost: 150, icon: "🌿", searchTerm: `nature treks near ${to}`, linkType: "maps" as const },
+    { time: "12:00", activity: `Photography at scenic spots`, cost: 0, icon: "📸", searchTerm: `scenic spots in ${to}`, linkType: "images" as const },
+    { time: "15:00", activity: `Adventure activity in ${to}`, cost: 1500, icon: "🎢", searchTerm: `adventure activities in ${to}`, linkType: "book" as const },
+    { time: "18:00", activity: `Spa & relaxation in ${to}`, cost: 1200, icon: "💆", searchTerm: `best spas in ${to}`, linkType: "maps" as const },
   ];
 
   const result: ItineraryDay[] = [];
   for (let d = 1; d <= Math.min(days, 5); d++) {
-    const dayActivities = [];
+    const dayActivities: typeof activities = [];
     const used = new Set<number>();
     for (let a = 0; a < 4 + Math.floor(Math.random() * 2); a++) {
       let idx;
