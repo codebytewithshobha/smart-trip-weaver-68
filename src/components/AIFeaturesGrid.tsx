@@ -2,6 +2,7 @@ import { useState } from "react";
 import AIFeaturePanel, { AILoadingInline, useAILoading } from "./AIFeaturePanel";
 import TravelBuddyPanel from "./TravelBuddyPanel";
 import SmartPackingPanel from "./SmartPackingPanel";
+import CarbonFootprintPanel from "./CarbonFootprintPanel";
 import {
   generateCarbonData, generateHiddenGems,
   generatePackingList, generatePricePrediction, generateWeatherData,
