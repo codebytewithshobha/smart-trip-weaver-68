@@ -1,11 +1,14 @@
 import { TransportOption } from "@/types/travel";
-import { Clock, Star, Leaf, Users, MapPin, ExternalLink } from "lucide-react";
+import { Clock, Star, Leaf, Users, MapPin, ExternalLink, ArrowRight, Navigation } from "lucide-react";
+import { useState } from "react";
 
 const typeConfig = {
   train: { icon: "🚆", label: "Train", accent: "border-l-success", bookingUrl: "https://www.irctc.co.in", bookingLabel: "Book on IRCTC" },
   flight: { icon: "✈️", label: "Flight", accent: "border-l-primary", bookingUrl: "https://www.makemytrip.com/flights", bookingLabel: "Book on MakeMyTrip" },
   bus: { icon: "🚌", label: "Bus", accent: "border-l-warning", bookingUrl: "https://www.redbus.in", bookingLabel: "Book on RedBus" },
 };
+
+const modeIcons: Record<string, string> = { train: "🚆", bus: "🚌", auto: "🛺", cab: "🚕" };
 
 interface TransportCardProps {
   option: TransportOption;
@@ -14,11 +17,14 @@ interface TransportCardProps {
 
 export default function TransportCard({ option, onSelect }: TransportCardProps) {
   const config = typeConfig[option.type];
+  const [showConnections, setShowConnections] = useState(false);
 
   const handleBooking = (e: React.MouseEvent) => {
     e.stopPropagation();
     window.open(config.bookingUrl, "_blank", "noopener,noreferrer");
   };
+
+  const hasConnections = !option.isDirect && option.connections && option.connections.length > 0;
 
   return (
     <div
@@ -32,6 +38,16 @@ export default function TransportCard({ option, onSelect }: TransportCardProps) 
             <span className="text-xl">{config.icon}</span>
             <span className="font-display font-semibold text-foreground">{option.provider}</span>
             <span className="text-xs px-2 py-0.5 rounded-full bg-secondary text-secondary-foreground">{config.label}</span>
+            {!option.isDirect && (
+              <span className="text-xs px-2 py-0.5 rounded-full bg-warning/20 text-warning border border-warning/30">
+                Connecting
+              </span>
+            )}
+            {option.isDirect && (
+              <span className="text-xs px-2 py-0.5 rounded-full bg-success/20 text-success border border-success/30">
+                Direct
+              </span>
+            )}
           </div>
           <div className="flex items-center gap-4 text-sm text-muted-foreground">
             <span className="font-semibold text-foreground">{option.departureTime}</span>
@@ -66,6 +82,53 @@ export default function TransportCard({ option, onSelect }: TransportCardProps) 
           </button>
         </div>
       </div>
+
+      {/* Connection/Interchange Info */}
+      {hasConnections && (
+        <div className="mt-3 border-t border-muted-foreground/10 pt-3">
+          <button
+            onClick={(e) => { e.stopPropagation(); setShowConnections(!showConnections); }}
+            className="flex items-center gap-2 text-xs font-medium text-warning hover:text-warning/80 transition-colors"
+          >
+            <Navigation className="h-3.5 w-3.5" />
+            {showConnections ? "Hide" : "Show"} nearby interchange options ({option.connections!.length})
+          </button>
+
+          {showConnections && (
+            <div className="mt-3 space-y-2 animate-fade-in">
+              <p className="text-xs text-muted-foreground mb-2">
+                🔄 No direct {config.label.toLowerCase()} available — here's how to reach the nearest {config.label.toLowerCase()} station:
+              </p>
+              {option.connections!.map((conn, idx) => (
+                <div
+                  key={idx}
+                  className="flex items-center gap-3 p-3 rounded-lg bg-secondary/50 border border-muted-foreground/10 hover:bg-secondary/80 transition-colors"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    window.open(`https://www.google.com/maps/dir/${encodeURIComponent(conn.from)}/${encodeURIComponent(conn.to)}`, "_blank");
+                  }}
+                >
+                  <span className="text-lg">{modeIcons[conn.mode] || "🚗"}</span>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-1.5 text-sm">
+                      <span className="font-medium text-foreground truncate">{conn.from}</span>
+                      <ArrowRight className="h-3 w-3 text-muted-foreground flex-shrink-0" />
+                      <span className="font-medium text-foreground truncate">{conn.to}</span>
+                    </div>
+                    <div className="flex items-center gap-3 text-xs text-muted-foreground mt-0.5">
+                      <span className="capitalize">{conn.mode}</span>
+                      <span>• {conn.distance}</span>
+                      <span>• {conn.duration}</span>
+                    </div>
+                    <p className="text-xs text-primary/80 mt-1">💡 {conn.tip}</p>
+                  </div>
+                  <MapPin className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }
