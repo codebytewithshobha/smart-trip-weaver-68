@@ -3,12 +3,13 @@ import AIFeaturePanel, { AILoadingInline, useAILoading } from "./AIFeaturePanel"
 import TravelBuddyPanel from "./TravelBuddyPanel";
 import SmartPackingPanel from "./SmartPackingPanel";
 import CarbonFootprintPanel from "./CarbonFootprintPanel";
+import ReviewDetectorPanel from "./ReviewDetectorPanel";
 import {
   generateCarbonData, generateHiddenGems,
   generatePackingList, generatePricePrediction, generateWeatherData,
   generateSafetyScore, generateHiddenCosts, SafetyData,
 } from "@/data/mockData";
-import { Leaf, Users, Gem, Backpack, TrendingUp, CloudSun, ShieldCheck, DollarSign, ExternalLink, MapPin, Phone, AlertTriangle, Moon, Lightbulb } from "lucide-react";
+import { Leaf, Users, Gem, Backpack, TrendingUp, CloudSun, ShieldCheck, DollarSign, ExternalLink, MapPin, Phone, AlertTriangle, Moon, Lightbulb, MessageSquare } from "lucide-react";
 
 const features = [
   { id: "carbon", icon: Leaf, title: "Carbon Footprint", desc: "See CO₂ emissions for each route. Choose eco-friendly options.", color: "text-green-400" },
@@ -19,6 +20,7 @@ const features = [
   { id: "weather", icon: CloudSun, title: "Weather Compare", desc: "Live weather comparison between origin & destination.", color: "text-cyan-400" },
   { id: "safety", icon: ShieldCheck, title: "Safety Score", desc: "AI safety ratings for solo travelers, women travelers.", color: "text-teal-400" },
   { id: "costs", icon: DollarSign, title: "Hidden Costs AI", desc: "Predicts ALL expenses including food, local transport.", color: "text-orange-400" },
+  { id: "reviews", icon: MessageSquare, title: "Review Detector AI", desc: "Detect fake vs real reviews. AI-powered trust analysis.", color: "text-indigo-400" },
 ];
 
 interface AIFeaturesGridProps {
@@ -148,6 +150,9 @@ export default function AIFeaturesGrid({ destination, budget }: AIFeaturesGridPr
             <p className="text-xs text-warning">⚠️ Your actual trip may cost ~₹{(budget + total).toLocaleString()}</p>
           </div>
         );
+      }
+      case "reviews": {
+        return <ReviewDetectorPanel destination={destination} />;
       }
       default:
         return null;
