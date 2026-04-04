@@ -3,6 +3,7 @@ import AIFeaturePanel, { AILoadingInline, useAILoading } from "./AIFeaturePanel"
 import TravelBuddyPanel from "./TravelBuddyPanel";
 import SmartPackingPanel from "./SmartPackingPanel";
 import CarbonFootprintPanel from "./CarbonFootprintPanel";
+import ReviewDetectorPanel from "./ReviewDetectorPanel";
 import {
   generateCarbonData, generateHiddenGems,
   generatePackingList, generatePricePrediction, generateWeatherData,
