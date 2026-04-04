@@ -136,6 +136,9 @@ export default function ResultsPage() {
           </div>
         )}
 
+        {/* Hotel Recommendations */}
+        <HotelRecommendations destination={to} budget={budget} />
+
         {/* AI Features */}
         <AIFeaturesGrid destination={to} budget={budget} />
 
