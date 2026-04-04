@@ -96,21 +96,7 @@ export default function AIFeaturesGrid({ destination, budget }: AIFeaturesGridPr
         );
       }
       case "packing": {
-        const list = generatePackingList();
-        return (
-          <div className="space-y-4">
-            {list.map((cat) => (
-              <div key={cat.category}>
-                <h4 className="font-semibold text-foreground text-sm mb-2">{cat.category}</h4>
-                <div className="flex flex-wrap gap-2">
-                  {cat.items.map((item) => (
-                    <span key={item} className="text-xs px-3 py-1.5 rounded-full bg-secondary text-secondary-foreground">✓ {item}</span>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
-        );
+        return <SmartPackingPanel destination={destination} />;
       }
       case "price": {
         const data = generatePricePrediction();
