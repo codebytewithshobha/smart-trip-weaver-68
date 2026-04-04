@@ -151,6 +151,9 @@ export default function AIFeaturesGrid({ destination, budget }: AIFeaturesGridPr
           </div>
         );
       }
+      case "reviews": {
+        return <ReviewDetectorPanel destination={destination} />;
+      }
       default:
         return null;
     }
