@@ -21,6 +21,15 @@ export interface TransportOption {
   stops: number;
   seatType?: string;
   boardingPoint?: string;
+  isDirect: boolean;
+  connections?: {
+    from: string;
+    to: string;
+    mode: 'train' | 'bus' | 'auto' | 'cab';
+    duration: string;
+    distance: string;
+    tip: string;
+  }[];
 }
 
 export interface ItineraryDay {

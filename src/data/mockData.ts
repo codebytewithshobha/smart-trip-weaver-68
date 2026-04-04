@@ -8,6 +8,23 @@ const providers = {
 
 const boardingPoints = ["Central Bus Stand", "Railway Station", "Airport Road", "City Center", "Highway Junction"];
 
+const nearbyHubs: Record<string, { hub: string; distance: string; duration: string }[]> = {
+  default: [
+    { hub: "Ranchi Junction", distance: "12 km", duration: "25 min" },
+    { hub: "Birsa Munda Airport", distance: "8 km", duration: "20 min" },
+    { hub: "Central Bus Stand", distance: "5 km", duration: "15 min" },
+  ],
+};
+
+const connectionModes: ('train' | 'bus' | 'auto' | 'cab')[] = ['auto', 'cab', 'bus', 'train'];
+const connectionTips = [
+  "Auto-rickshaws available right outside the station",
+  "Pre-book an Ola/Uber for best rates",
+  "Local buses run every 15 minutes from this stop",
+  "Shared jeeps available at the main stand",
+  "E-rickshaws are cheapest for short distances",
+];
+
 export function generateTransportOptions(from: string, to: string, budget: number): TransportOption[] {
   const options: TransportOption[] = [];
   const types: ('train' | 'flight' | 'bus')[] = ['train', 'flight', 'bus'];
