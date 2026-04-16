@@ -50,6 +50,24 @@ export default function ResultsPage() {
   const flightCount = options.filter(o => o.type === 'flight').length;
   const busCount = options.filter(o => o.type === 'bus').length;
 
+  const downloadItinerary = () => {
+    const content = [`Trip Itinerary: ${from} → ${to}`, `Budget: ₹${budget.toLocaleString()}`, "", ...itinerary.flatMap((day) => [
+      `Day ${day.day}: ${day.title}`,
+      ...day.activities.map((act) => `  - ${act.time} | ${act.activity} | ₹${act.cost.toLocaleString()} | ${act.notes || ""}`),
+      "",
+    ])];
+
+    const blob = new Blob([content.join("\n")], { type: "text/plain;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement("a");
+    anchor.href = url;
+    anchor.download = `itinerary-${from}-${to}.txt`;
+    document.body.appendChild(anchor);
+    anchor.click();
+    document.body.removeChild(anchor);
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <div className="min-h-screen gradient-hero">
       <div className="glow-overlay absolute inset-0 pointer-events-none" />
@@ -143,6 +161,16 @@ export default function ResultsPage() {
         <AIFeaturesGrid destination={to} budget={budget} />
 
         {/* Itinerary */}
+        <div className="flex items-center justify-between gap-4">
+          <h2 className="text-lg font-semibold text-foreground">Your AI itinerary</h2>
+          <button
+            onClick={downloadItinerary}
+            disabled={itinerary.length === 0}
+            className="rounded-full bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition hover:bg-primary/90 disabled:cursor-not-allowed disabled:bg-primary/40"
+          >
+            Download itinerary
+          </button>
+        </div>
         <ItineraryView itinerary={itinerary} />
       </div>
     </div>

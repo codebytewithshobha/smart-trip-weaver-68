@@ -285,6 +285,11 @@ export default function HomePage() {
           ))}
         </div>
       </div>
+
+      {/* Footer */}
+      <footer className="relative z-10 border-t border-border/30 mt-12 py-6 text-center text-xs text-muted-foreground">
+        <p>© 2026 Smart Trip Weaver. All rights reserved. | Your AI-powered travel planning assistant.</p>
+      </footer>
     </div>
   );
 }
